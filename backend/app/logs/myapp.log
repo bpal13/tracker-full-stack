@@ -1,0 +1,6 @@
+INFO:app.logs.logger:API Startup.
+INFO:app.logs.logger:API Shutdown.
+2024-09-05 08:35:20 PM API Startup.: 
+2024-09-05 08:35:20 PM API Shutdown.: 
+2024-09-05 08:35:53 PM: API Startup.
+2024-09-05 08:35:53 PM: API Shutdown.

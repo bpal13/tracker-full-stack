@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.card-mini {
+  @apply p-1 border border-solid border-blue-100 bg-blue-100 rounded-lg flex;
+}
