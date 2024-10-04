@@ -1,9 +1,15 @@
-from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .db import models
+from fastapi import FastAPI, Request, Response
+from .logger.logger_setup import logger_setup
+from .routers import admin, auth, tools, schedule
 from .db.database import engine
-from .routers import admin, auth, tools
-from .logs.logger import logger
+from .db import models
+import logging
+
+# Logger
+logger_setup()
+logger = logging.getLogger("trackerLogger")
+logger.info("Logger setup complete.")
 
 # create tables on startup
 models.Base.metadata.create_all(bind=engine)
@@ -16,26 +22,19 @@ app = FastAPI(
 
         Created by: Bence Pal
 
-        Updated:2024.09.05.
+        Updated:2024.09.25.
         """,
     summary="MEO Tool Tracker API",
-    version="0.5",
+    version="0.6",
     debug=False,
-    contact={
-        "name": "Pál Bence",
-        "email": "email@example.com",
-    },
     docs_url="/docs",
-    on_startup=logger.info("API Startup."),
-    on_shutdown=logger.info("API Shutdown.")
 )
 
 origins = [
-    "http://localhost",
     "http://localhost:5173",
-    "http://localhost:5173/",
+    "http://127.0.0.1:5173",
     "http://192.168.0.171:8050",
-    "http://docker2:8050",
+    "http://192.168.0.213:8050"
     ]
 
 app.add_middleware(
@@ -44,14 +43,15 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
 )
 
 app.include_router(admin.router)
 app.include_router(auth.router)
 app.include_router(tools.router)
-
+app.include_router(schedule.router)
 
 @app.get('/')
-def root():
+def root(request: Request):
     return {'message': 'tool tracker API'}
+
+

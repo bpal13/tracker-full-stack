@@ -47,6 +47,8 @@ const AddToolPage = () => {
 
   // Set focus on form
   useEffect(() => {
+    document.title = 'Add Tool - MEO Tracker';
+
     toolIDRef.current.focus();
   }, []);
 
@@ -94,14 +96,14 @@ const AddToolPage = () => {
           <section className='grid gap-4'>
             <div className='grid grid-cols-2'>
               <SelectGroup
-                label='Tool Location'
+                label='Tárolás helye'
                 name='tool_location'
                 options={tool_locations}
                 value={formData.toolLoc}
                 onChange={(e) => editFormData({ toolLoc: e.target.value })}
               />
               <InputGroup
-                label='Tool ID'
+                label='Azonosító'
                 placeholder='pl: 4128'
                 name='tool_id'
                 fieldRef={toolIDRef}
@@ -113,7 +115,7 @@ const AddToolPage = () => {
             </div>
             <div className='grid grid-cols-2'>
               <InputGroup
-                label='Tool Brand'
+                label='Márka'
                 placeholder='pl: Mitutoyo'
                 name='tool_brand'
                 fieldRef={toolBrandRef}
@@ -123,7 +125,7 @@ const AddToolPage = () => {
                 onChange={(e) => editFormData({ toolBrand: e.target.value })}
               />
               <InputGroup
-                label='Factory S/N'
+                label='Gyári szám'
                 placeholder='gyari sorozatszam'
                 name='tool_serial'
                 fieldRef={toolSerialRef}
@@ -135,14 +137,14 @@ const AddToolPage = () => {
             </div>
             <div className='grid grid-cols-2'>
               <SelectGroup
-                label='Tool Name'
+                label='Eszköz neve'
                 name='tool_name'
                 options={tool_names}
                 value={formData.toolName}
                 onChange={(e) => editFormData({ toolName: e.target.value })}
               />
               <SelectGroup
-                label='Tool Type'
+                label='Eszköz típusa'
                 name='tool_type'
                 options={tool_types}
                 value={formData.toolType}
@@ -151,7 +153,7 @@ const AddToolPage = () => {
             </div>
             <div className='grid grid-cols-3 gap-2'>
               <InputGroup
-                label='Tool Accuracy'
+                label='Pontosság'
                 placeholder='pl: 0.02'
                 name='tool_accuracy'
                 fieldRef={toolAccRef}
@@ -161,7 +163,7 @@ const AddToolPage = () => {
                 onChange={(e) => editFormData({ toolAccuracy: e.target.value })}
               />
               <InputGroup
-                label='Meas. Range'
+                label='Méréstartomány'
                 placeholder='pl: 0-150'
                 name='tool_range'
                 fieldRef={toolRangeRef}
@@ -171,7 +173,7 @@ const AddToolPage = () => {
                 onChange={(e) => editFormData({ toolRange: e.target.value })}
               />
               <InputGroup
-                label='Max Deviation'
+                label='Max eltérés'
                 placeholder='pl: 0.01'
                 name='max_deviation'
                 fieldRef={toolDevRef}
@@ -185,7 +187,7 @@ const AddToolPage = () => {
             </div>
             <div className='grid grid-cols-1'>
               <SelectGroup
-                label='Tool Status'
+                label='Eszköz státusza'
                 name='tool_status'
                 options={tool_status}
                 value={formData.toolStatus}
@@ -193,7 +195,7 @@ const AddToolPage = () => {
               />
             </div>
             <div className='grid grid-cols-1'>
-              <label htmlFor='notes'>Notes:</label>
+              <label htmlFor='notes'>Megjegyzés:</label>
               <textarea
                 id='notes'
                 className='textarea textarea-solid max-w-full'

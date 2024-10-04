@@ -26,6 +26,10 @@ const AddUserPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    document.title = 'Add user - MEO Tracker';
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // clear form error

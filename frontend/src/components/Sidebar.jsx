@@ -2,16 +2,33 @@ import SidebarFilter from './SidebarFilter';
 import logo from '../assets/icon-nobg.png';
 import SidebarSearch from './SidebarSearch';
 import useAuth from '../hooks/useAuth';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import useApiPrivate from '../hooks/useApiPrivate';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Sidebar = () => {
   const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
+  const api = useApiPrivate();
 
   const username = auth?.username || 'USER NAME';
   const AVATAR_URL = 'https://ui-avatars.com/api/?size=150&name=' + username;
 
   const logout = async () => {
-    setAuth({});
+    try {
+      const resp = await api.get('/logout');
+      if (resp.status === 200) {
+        setAuth({});
+        navigate('/');
+      }
+    } catch (error) {
+      if (!error?.resp) {
+        toast.error('No response from the server. Try again later.');
+      } else {
+        console.log(error);
+      }
+    }
   };
 
   return (
@@ -54,16 +71,18 @@ const Sidebar = () => {
                 Statistics
               </NavLink>
 
-              <NavLink
-                to='/tool/new'
-                className={({ isActive }) =>
-                  isActive ? 'menu-item menu-active' : 'menu-item'
-                }
-                end
-              >
-                <span className='material-symbols-outlined'>library_add</span>
-                Add Tool
-              </NavLink>
+              {auth?.role === 'viewer' || (
+                <NavLink
+                  to='/tool/new'
+                  className={({ isActive }) =>
+                    isActive ? 'menu-item menu-active' : 'menu-item'
+                  }
+                  end
+                >
+                  <span className='material-symbols-outlined'>library_add</span>
+                  Add Tool
+                </NavLink>
+              )}
               {auth?.role === 'admin' && (
                 <li>
                   <input
@@ -112,6 +131,18 @@ const Sidebar = () => {
                         </span>
                         Create User
                       </NavLink>
+                      <NavLink
+                        to='/admin/reset-user'
+                        className={({ isActive }) =>
+                          isActive
+                            ? 'menu-item ml-6 menu-active'
+                            : 'menu-item ml-6'
+                        }
+                        end
+                      >
+                        <span className='material-symbols-outlined'>key</span>
+                        Reset a password
+                      </NavLink>
                     </div>
                   </div>
                 </li>
@@ -142,16 +173,26 @@ const Sidebar = () => {
 
                 <div className='menu-item-collapse'>
                   <div className='min-h-0'>
-                    <label className='menu-item ml-6'>
+                    <label className='menu-item menu-item-disabled ml-6'>
                       <span className='material-symbols-outlined'>
                         contact_page
                       </span>
                       Profile
                     </label>
-                    <label className='menu-item ml-6'>
-                      <span className='material-symbols-outlined'>key</span>
-                      Change Password
-                    </label>
+                    {auth?.role === 'viewer' || (
+                      <NavLink
+                        to='/user/change-password'
+                        className={({ isActive }) =>
+                          isActive
+                            ? 'menu-item ml-6 menu-active'
+                            : 'menu-item ml-6'
+                        }
+                        end
+                      >
+                        <span className='material-symbols-outlined'>key</span>
+                        Change Password
+                      </NavLink>
+                    )}
                     <label className='menu-item ml-6' onClick={logout}>
                       <span className='material-symbols-outlined'>logout</span>
                       Logout

@@ -1,6 +1,6 @@
 import Layout from '../components/Layout';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import useApiPrivate from '../hooks/useApiPrivate';
 import InputGroup from '../components/InputGroup';
 import { SelectGroup } from '../components/SelectGroup';
@@ -18,7 +18,6 @@ const ModifyToolPage = () => {
   const api = useApiPrivate();
   let { state } = useLocation();
   const [formData, setFormData] = useState({ ...state });
-  // console.log(formData);
 
   const toolIDRef = useRef();
   const toolBrandRef = useRef();
@@ -27,7 +26,9 @@ const ModifyToolPage = () => {
   const toolRangeRef = useRef();
   const toolDevRef = useRef();
 
-  // console.log(state);
+  useEffect(() => {
+    document.title = 'Edit Tool - MEO Tracker';
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,11 +64,13 @@ const ModifyToolPage = () => {
           className='border rounded-xl p-4 bg-white'
           onSubmit={handleSubmit}
         >
-          <h1 className='text-center font-medium text-2xl my-2'>Edit Tool</h1>
+          <h1 className='text-center font-medium text-2xl my-2'>
+            Edit Tool Details
+          </h1>
           <div className='grid gap-4'>
             <div className='grid grid-cols-2'>
               <SelectGroup
-                label='Tool Location'
+                label='Tárolás helye'
                 name='tool_location'
                 options={tool_locations}
                 value={formData.tool_location}
@@ -76,7 +79,7 @@ const ModifyToolPage = () => {
                 }
               />
               <InputGroup
-                label='Tool ID'
+                label='Azonosító'
                 placeholder='pl: 4128'
                 name='tool_id'
                 fieldRef={toolIDRef}
@@ -90,7 +93,7 @@ const ModifyToolPage = () => {
             </div>
             <div className='grid grid-cols-2'>
               <InputGroup
-                label='Tool Brand'
+                label='Márka'
                 placeholder='pl: Mitutoyo'
                 name='tool_brand'
                 fieldRef={toolBrandRef}
@@ -102,7 +105,7 @@ const ModifyToolPage = () => {
                 }
               />
               <InputGroup
-                label='Factory S/N'
+                label='Gyári szám'
                 placeholder='gyari szam'
                 name='tool_serial'
                 fieldRef={toolSerialRef}
@@ -116,7 +119,7 @@ const ModifyToolPage = () => {
             </div>
             <div className='grid grid-cols-2'>
               <SelectGroup
-                label='Tool Name'
+                label='Eszköz neve'
                 name='tool_name'
                 options={tool_names}
                 value={formData.tool_name}
@@ -125,7 +128,7 @@ const ModifyToolPage = () => {
                 }
               />
               <SelectGroup
-                label='Tool Type'
+                label='Eszköz típusa'
                 name='tool_type'
                 options={tool_types}
                 value={formData.tool_type}
@@ -136,7 +139,7 @@ const ModifyToolPage = () => {
             </div>
             <div className='grid grid-cols-3 gap-2'>
               <InputGroup
-                label='Tool Accuracy'
+                label='Eszköz pontossága'
                 placeholder='pl: 0.02'
                 name='tool_accuracy'
                 fieldRef={toolAccRef}
@@ -148,7 +151,7 @@ const ModifyToolPage = () => {
                 }
               />
               <InputGroup
-                label='Meas. Range'
+                label='Méréshatár'
                 placeholder='pl: 0-150'
                 name='tool_range'
                 fieldRef={toolRangeRef}
@@ -160,7 +163,7 @@ const ModifyToolPage = () => {
                 }
               />
               <InputGroup
-                label='Max Deviation'
+                label='Max eltérés'
                 placeholder='pl: 0.01'
                 name='max_deviation'
                 fieldRef={toolDevRef}
@@ -173,7 +176,7 @@ const ModifyToolPage = () => {
               />
             </div>
             <div className='grid grid-cols-1'>
-              <label htmlFor='notes'>Notes:</label>
+              <label htmlFor='notes'>Megjegyzés:</label>
               <textarea
                 id='notes'
                 className='textarea textarea-solid max-w-full'

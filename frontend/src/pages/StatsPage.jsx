@@ -24,6 +24,10 @@ const StatsPage = () => {
     getData();
   }, []);
 
+  useEffect(() => {
+    document.title = 'Statistics - MEO Tracker';
+  }, []);
+
   return (
     <Layout>
       {!isLoading && (

@@ -1,0 +1,35 @@
+version: 1
+formatters:
+  simple:
+    format: '%(asctime)s - %(levelname)s - %(message)s'
+    datefmt: '%Y-%m-%d %I:%M:%S'
+
+  standard:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    datefmt: '%Y-%m-%d %I:%M:%S'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: standard
+    stream: ext://sys.stdout
+
+  info_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: simple
+    filename: 'app/logger/logfiles/tracker_info.log'
+    maxBytes: 2048
+    backupCount: 5
+    encoding: utf8
+
+root:
+  level: DEBUG
+  handlers: [console]
+
+loggers:
+  trackerLogger:
+    level: INFO
+    handlers: [console, info_handler]
+    propagate: no

@@ -1,7 +1,9 @@
 import moment from 'moment';
 import { Link, useLocation } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
 const Card = ({ tool }) => {
+  const { auth } = useAuth();
   let location = useLocation();
 
   const deleteTool = async () => {
@@ -32,29 +34,35 @@ const Card = ({ tool }) => {
                 >
                   Details
                 </Link>
-                <Link
-                  tabIndex='-1'
-                  to='/tool/calibrate'
-                  state={{ id: tool.id, prevPath: location.pathname }}
-                  className='dropdown-item text-sm'
-                >
-                  Calibrate
-                </Link>
-                <Link
-                  to='tool/modify'
-                  state={{ ...tool, prevPath: location.pathname }}
-                  tabIndex='-1'
-                  className='dropdown-item text-sm'
-                >
-                  Edit Tool
-                </Link>
-                <Link
-                  onClick={deleteTool}
-                  tabIndex='-1'
-                  className='dropdown-item text-sm text-red-600 hover:bg-red-200 hover:text-black'
-                >
-                  Delete Tool
-                </Link>
+                {auth?.role === 'viewer' || (
+                  <Link
+                    tabIndex='-1'
+                    to='/tool/calibrate'
+                    state={{ id: tool.id, prevPath: location.pathname }}
+                    className='dropdown-item text-sm'
+                  >
+                    Calibrate
+                  </Link>
+                )}
+                {auth?.role === 'viewer' || (
+                  <Link
+                    to='tool/modify'
+                    state={{ ...tool, prevPath: location.pathname }}
+                    tabIndex='-1'
+                    className='dropdown-item text-sm'
+                  >
+                    Edit Tool
+                  </Link>
+                )}
+                {auth?.role === 'admin' && (
+                  <Link
+                    onClick={deleteTool}
+                    tabIndex='-1'
+                    className='dropdown-item text-sm text-red-600 hover:bg-red-200 hover:text-black'
+                  >
+                    Delete Tool
+                  </Link>
+                )}
               </div>
             </div>
           </div>

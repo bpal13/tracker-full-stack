@@ -1,7 +1,5 @@
 import Sidebar from './Sidebar';
 import { Toaster } from 'react-hot-toast';
-import Card from './Card';
-import { ErrorComponent } from './ErrorComponent';
 
 const Layout = ({ children }) => {
   return (

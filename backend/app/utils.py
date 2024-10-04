@@ -1,5 +1,6 @@
 import datetime
 from passlib.context import CryptContext
+from passlib.exc import UnknownHashError
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from .db.database import get_db
@@ -16,7 +17,10 @@ def hash(password: str):
 
 
 def verify(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except UnknownHashError as error:
+        return False
 
 
 

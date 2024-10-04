@@ -1,11 +1,17 @@
 import { useLocation, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import useAuth from '../hooks/useAuth';
 import Layout from '../components/Layout';
 import moment from 'moment';
 
 const CalibDetails = () => {
   const { state } = useLocation();
-  // console.log(state);
+  const { auth } = useAuth();
+
+  useEffect(() => {
+    document.title = 'Calibration Detail  - MEO Tracker';
+  }, []);
+
   return (
     <Layout>
       <div className='flex flex-col justify-center items-center w-screen'>
@@ -15,35 +21,35 @@ const CalibDetails = () => {
           </h1>
           <section className='grid grid-cols-3 gap-4'>
             <div>
-              <p className='text-md font-semibold'>Calibration By:</p>
+              <p className='text-md font-semibold'>Kalibrálta:</p>
               <p>{state.calibration_by}</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>Rating:</p>
+              <p className='text-md font-semibold'>Értékelés:</p>
               <p>{state.rating}</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>Temperature:</p>
+              <p className='text-md font-semibold'>Hömérséklet:</p>
               <p>{state.temperature} °C</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>Deviation:</p>
+              <p className='text-md font-semibold'>Mért eltérés:</p>
               <p>{state.actual_deviation} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>Calibration Day:</p>
+              <p className='text-md font-semibold'>Kalibráció napja:</p>
               <p>{moment(state.calibration_date).format('LL')}</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>Next Calibration:</p>
+              <p className='text-md font-semibold'>Következő kalibráció:</p>
               <p>{moment(state.next_calibration).format('LL')}</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>Hasab:</p>
+              <p className='text-md font-semibold'>Hasáb:</p>
               <p>{state.hasab === null ? 'N/A' : state.hasab}</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>Gyuru:</p>
+              <p className='text-md font-semibold'>Gyűrű:</p>
               <p>{state.ring === null ? 'N/A' : state.ring}</p>
             </div>
             <div>
@@ -54,75 +60,75 @@ const CalibDetails = () => {
           <div className='divider' />
           <section className='grid grid-cols-3 gap-4'>
             <div>
-              <p className='text-md font-semibold'>KULSO_I_A</p>
+              <p className='text-md font-semibold'>KULSO I A</p>
               <p>{state.KULSO_I_A} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>KULSO_II_A</p>
+              <p className='text-md font-semibold'>KULSO II A</p>
               <p>{state.KULSO_II_A} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>KULSO_III_A</p>
+              <p className='text-md font-semibold'>KULSO III A</p>
               <p>{state.KULSO_III_A} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>KULSO_I_B</p>
+              <p className='text-md font-semibold'>KULSO I B</p>
               <p>{state.KULSO_I_B} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>KULSO_II_B</p>
+              <p className='text-md font-semibold'>KULSO II B</p>
               <p>{state.KULSO_II_B} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>KULSO_III_B</p>
+              <p className='text-md font-semibold'>KULSO III B</p>
               <p>{state.KULSO_III_B} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>KULSO_I_C</p>
+              <p className='text-md font-semibold'>KULSO I C</p>
               <p>{state.KULSO_I_C} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>KULSO_II_C</p>
+              <p className='text-md font-semibold'>KULSO II C</p>
               <p>{state.KULSO_II_C} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>KULSO_III_C</p>
+              <p className='text-md font-semibold'>KULSO III C</p>
               <p>{state.KULSO_III_C} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>BELSO_I_A</p>
+              <p className='text-md font-semibold'>BELSO I A</p>
               <p>{state.BELSO_I_A} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>BELSO_II_A</p>
+              <p className='text-md font-semibold'>BELSO II A</p>
               <p>{state.BELSO_II_A} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>BELSO_III_A</p>
+              <p className='text-md font-semibold'>BELSO III A</p>
               <p>{state.BELSO_III_A} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>BELSO_I_B</p>
+              <p className='text-md font-semibold'>BELSO I B</p>
               <p>{state.BELSO_I_B} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>BELSO_II_B</p>
+              <p className='text-md font-semibold'>BELSO II B</p>
               <p>{state.BELSO_II_B} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>BELSO_III_B</p>
+              <p className='text-md font-semibold'>BELSO III B</p>
               <p>{state.BELSO_III_B} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>BELSO_I_C</p>
+              <p className='text-md font-semibold'>BELSO I C</p>
               <p>{state.BELSO_I_C} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>BELSO_II_C</p>
+              <p className='text-md font-semibold'>BELSO II C</p>
               <p>{state.BELSO_II_C} mm</p>
             </div>
             <div>
-              <p className='text-md font-semibold'>BELSO_III_C</p>
+              <p className='text-md font-semibold'>BELSO III C</p>
               <p>{state.BELSO_III_C} mm</p>
             </div>
             <div>
@@ -135,14 +141,20 @@ const CalibDetails = () => {
             </div>
           </section>
           <section className='flex flex-row gap-2'>
-            <Link
-              className='btn btn-primary btn-block'
-              state={state}
-              to='/tool/calibration/edit'
+            {auth?.role === 'viewer' || (
+              <Link
+                className='btn btn-primary btn-block'
+                state={state}
+                to='/tool/calibration/edit'
+              >
+                Edit Calibration
+              </Link>
+            )}
+            <button
+              type='button'
+              className='btn btn-error btn-block'
+              disabled={auth?.role === 'viewer' ? true : false}
             >
-              Edit Calibration
-            </Link>
-            <button type='button' className='btn btn-error btn-block '>
               Delete
             </button>
             <Link

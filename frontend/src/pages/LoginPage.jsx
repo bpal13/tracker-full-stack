@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import InputGroup from '../components/InputGroup';
-import { apiPrivate, apiPublic } from '../api/ApiClient';
+import { apiPublic } from '../api/ApiClient';
 import useAuth from '../hooks/useAuth';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const { setAuth } = useAuth();
@@ -22,6 +21,7 @@ const LoginPage = () => {
 
   // Set the focus on the username field
   useEffect(() => {
+    document.title = 'Login - MEO Tracker';
     usernameRef.current.focus();
   }, []);
 
@@ -50,20 +50,19 @@ const LoginPage = () => {
         }
       );
       if (response?.status === 200) {
-        console.log(response);
-        const accessToken = response.data.access_token;
-        const refreshToken = response.data.refresh_token;
+        // console.log(response);
+        // const accessToken = response.data.access_token;
         setAuth({
           username: response.data.username,
-          accessToken,
-          refreshToken,
+          accessToken: response.data.access_token,
           role: response.data.role,
           fullname: response.data.fullname,
         });
-
         setUser('');
         setPwd('');
-        navigate(from, { relative: true });
+        if (response.data.verified === false) {
+          navigate('/user/verify');
+        } else navigate(from, { relative: true });
       }
     } catch (error) {
       if (!error?.response) {
@@ -136,11 +135,11 @@ const LoginPage = () => {
             Sign In
           </button>
         </section>
-        <section className='form-footer'>
-          <p className='text-sm'>
-            Forgot your password?
-            <a href='#'>Click here.</a>
-          </p>
+        <section className='form-footer flex flex-col items-center'>
+          <p className='text-sm'>Forgot your password?</p>
+          <Link to='/user/reset-password' className='text-sm underline '>
+            Click here.
+          </Link>
         </section>
       </form>
     </main>

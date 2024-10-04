@@ -7,17 +7,12 @@ const useRefreshToken = () => {
   const refresh = async () => {
     const response = await apiPublic.get('/refresh', {
       withCredentials: true,
-      // headers: {
-      //   'Set-Cookie': `refresh_token=${auth.refreshToken}`,
-      // },
     });
-    setAuth((prev) => {
-      // console.log(JSON.stringify(prev));
-      // console.log(`New: ${response.data.access_token}`);
-      return {
-        ...prev,
-        accessToken: response.data.access_token,
-      };
+    setAuth({
+      username: response.data.username,
+      accessToken: response.data.access_token,
+      role: response.data.role,
+      fullname: response.data.fullname,
     });
     return response.data.access_token;
   };

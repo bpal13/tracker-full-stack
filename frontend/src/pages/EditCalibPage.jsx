@@ -1,5 +1,5 @@
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import useApiPrivate from '../hooks/useApiPrivate';
 import InputGroup from '../components/InputGroup';
 import { SelectGroup } from '../components/SelectGroup';
@@ -19,6 +19,10 @@ const EditCalibPage = () => {
     // console.log(data);
     setFormData({ ...formData, ...data });
   };
+
+  useEffect(() => {
+    document.title = 'Edit Calibration - MEO Tracker';
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,20 +56,20 @@ const EditCalibPage = () => {
           </section>
           <section className='grid grid-cols-3 gap-4'>
             <SelectGroup
-              label='Rating:'
+              label='Értékelés:'
               name='form-rating'
               options={calib_ratings}
               value={formData.rating}
               onChange={(e) => editFormData({ rating: e.target.value })}
             />
             <InputGroup
-              label='Temperature'
+              label='Hőmérséklet'
               name='form-temperature'
               value={formData.temperature}
               onChange={(e) => editFormData({ temperature: e.target.value })}
             />
             <InputGroup
-              label='Actual Deviation:'
+              label='Mért eltérés:'
               name='form-deviation'
               value={formData.actual_deviation}
               onChange={(e) =>
@@ -79,13 +83,13 @@ const EditCalibPage = () => {
               onChange={(e) => editFormData({ etalon: e.target.value })}
             />
             <InputGroup
-              label='Hasab:'
+              label='Hasáb:'
               name='form-hasab'
               value={formData.hasab}
               onChange={(e) => editFormData({ hasab: e.target.value })}
             />
             <InputGroup
-              label='Ring:'
+              label='Gyűrű:'
               name='form-ring'
               value={formData.ring}
               onChange={(e) => editFormData({ ring: e.target.value })}
@@ -94,55 +98,55 @@ const EditCalibPage = () => {
           <div className='divider my-2' />
           <section className='grid grid-cols-3 gap-4'>
             <InputGroup
-              label='KULSO_I_A:'
+              label='KULSO I A:'
               name='form-KULSOIA'
               value={formData.KULSO_I_A}
               onChange={(e) => editFormData({ KULSO_I_A: e.target.value })}
             />
             <InputGroup
-              label='KULSO_II_A:'
+              label='KULSO II A:'
               name='form-KULSOIIA'
               value={formData.KULSO_II_A}
               onChange={(e) => editFormData({ KULSO_II_A: e.target.value })}
             />
             <InputGroup
-              label='KULSO_III_A:'
+              label='KULSO III A:'
               name='form-KULSOIIIA'
               value={formData.KULSO_III_A}
               onChange={(e) => editFormData({ KULSO_III_A: e.target.value })}
             />
             <InputGroup
-              label='KULSO_I_B:'
+              label='KULSO I B:'
               name='form-KULSOIB'
               value={formData.KULSO_I_B}
               onChange={(e) => editFormData({ KULSO_I_B: e.target.value })}
             />
             <InputGroup
-              label='KULSO_II_B:'
+              label='KULSO II B:'
               name='form-KULSOIIB'
               value={formData.KULSO_II_B}
               onChange={(e) => editFormData({ KULSO_II_B: e.target.value })}
             />
             <InputGroup
-              label='KULSO_III_B:'
+              label='KULSO III B:'
               name='form-KULSOIIIB'
               value={formData.KULSO_III_B}
               onChange={(e) => editFormData({ KULSO_III_B: e.target.value })}
             />
             <InputGroup
-              label='KULSO_I_C:'
+              label='KULSO I C:'
               name='form-KULSOIC'
               value={formData.KULSO_I_C}
               onChange={(e) => editFormData({ KULSO_I_C: e.target.value })}
             />
             <InputGroup
-              label='KULSO_II_C:'
+              label='KULSO II C:'
               name='form-KULSOIIC'
               value={formData.KULSO_II_C}
               onChange={(e) => editFormData({ KULSO_II_C: e.target.value })}
             />
             <InputGroup
-              label='KULSO_III_C:'
+              label='KULSO III C:'
               name='form-KULSOIIIC'
               value={formData.KULSO_III_C}
               onChange={(e) => editFormData({ KULSO_III_C: e.target.value })}
@@ -151,55 +155,55 @@ const EditCalibPage = () => {
           <div className='divider my-2' />
           <section className='grid grid-cols-3 gap-4'>
             <InputGroup
-              label='BELSO_I_A:'
+              label='BELSO I A:'
               name='form-BELSOIA'
               value={formData.BELSO_I_A}
               onChange={(e) => editFormData({ BELSO_I_A: e.target.value })}
             />
             <InputGroup
-              label='BELSO_II_A:'
+              label='BELSO II A:'
               name='form-BELSOIIA'
               value={formData.BELSO_II_A}
               onChange={(e) => editFormData({ BELSO_II_A: e.target.value })}
             />
             <InputGroup
-              label='BELSO_III_A:'
+              label='BELSO III A:'
               name='form-BELSOIIIA'
               value={formData.BELSO_III_A}
               onChange={(e) => editFormData({ BELSO_III_A: e.target.value })}
             />
             <InputGroup
-              label='BELSO_I_B:'
+              label='BELSO I B:'
               name='form-BELSOIB'
               value={formData.BELSO_I_B}
               onChange={(e) => editFormData({ BELSO_I_B: e.target.value })}
             />
             <InputGroup
-              label='BELSO_II_B:'
+              label='BELSO II B:'
               name='form-BELSOIIB'
               value={formData.BELSO_II_B}
               onChange={(e) => editFormData({ BELSO_II_B: e.target.value })}
             />
             <InputGroup
-              label='BELSO_III_B:'
+              label='BELSO III B:'
               name='form-BELSOIIIB'
               value={formData.BELSO_III_B}
               onChange={(e) => editFormData({ BELSO_III_B: e.target.value })}
             />
             <InputGroup
-              label='BELSO_I_C:'
+              label='BELSO I C:'
               name='form-BELSOIC'
               value={formData.BELSO_I_C}
               onChange={(e) => editFormData({ BELSO_I_C: e.target.value })}
             />
             <InputGroup
-              label='BELSO_II_C:'
+              label='BELSO II C:'
               name='form-BELSOIIC'
               value={formData.BELSO_II_C}
               onChange={(e) => editFormData({ BELSO_II_C: e.target.value })}
             />
             <InputGroup
-              label='BELSO_III_C:'
+              label='BELSO III C:'
               name='form-BELSOIIIC'
               value={formData.BELSO_III_C}
               onChange={(e) => editFormData({ BELSO_III_C: e.target.value })}

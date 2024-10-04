@@ -32,6 +32,10 @@ const HomePage = () => {
     }
   }, [display]);
 
+  useEffect(() => {
+    document.title = 'Home - MEO Tracker';
+  }, []);
+
   return <Layout>{isLoading ? <Spinner /> : <Cards />}</Layout>;
 };
 export default HomePage;

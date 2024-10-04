@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -22,7 +22,7 @@ class Role(BaseModel):
     name: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserCreate(BaseModel):
@@ -31,7 +31,7 @@ class UserCreate(BaseModel):
     fullname: str
     password: str
     employee_id: int
-    user_role: Optional[int] = None
+    user_role: int
 
 
 class UserOut(BaseModel):
@@ -41,9 +41,10 @@ class UserOut(BaseModel):
     email: EmailStr
     registered: datetime
     roles: Role
+    verified: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserLogin(BaseModel):
@@ -51,10 +52,10 @@ class UserLogin(BaseModel):
     fullname: str
     role: str
     access_token: str
-    refresh_token: str
+    verified: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserToolOut(BaseModel):
@@ -62,13 +63,35 @@ class UserToolOut(BaseModel):
     fullname: str
 
     class Config:
-        orm_mode = True    
+        from_attributes = True
 
 
+class ChangePassword(BaseModel):
+    password: str
+    password2: str    
+
+
+#Email Schema
+class EmailSchema(BaseModel):
+    email: List[EmailStr]
+    body: Optional[dict] | None
+
+
+class GetEmail(BaseModel):
+    email: EmailStr
+
+
+class UserMail(BaseModel):
+    email: EmailStr
+    username: str
+    fullname: str
+    password: str
+
+    
 # Tool Schemas
 class ToolCreate(BaseModel):
     status: str
-    tool_id: str | int
+    tool_id: str
     tool_name: str
     tool_location: str
     tool_type: str
@@ -87,7 +110,7 @@ class ToolOut(ToolCreate):
     valid_until: Optional[datetime]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ToolUpdate(BaseModel):
@@ -104,7 +127,7 @@ class ToolUpdate(BaseModel):
 
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 
@@ -145,13 +168,13 @@ class CalibOut(CalibCreate):
     calibration_by: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-#Roles Schema
-
-class Roles(BaseModel):
-    pass
+# Admin page schemas
+class UserReset(BaseModel):
+    username: str
+    password: str
 
 
 # Statistics schema

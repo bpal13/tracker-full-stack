@@ -2,6 +2,7 @@ import Layout from '../components/Layout';
 import { useState, useEffect } from 'react';
 import useApiPrivate from '../hooks/useApiPrivate';
 import { useLocation, Link } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 import moment from 'moment';
 import toast from 'react-hot-toast';
 import Spinner from '../components/Spinner';
@@ -11,7 +12,7 @@ const ToolDetailsPage = () => {
   const [toolData, setToolData] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const api = useApiPrivate();
-  //tool data in the state
+  const { auth } = useAuth();
   let { state } = useLocation();
 
   // console.log(state);
@@ -27,7 +28,7 @@ const ToolDetailsPage = () => {
         setCalib(respCalib.data);
         setToolData(respTool.data);
       } catch (error) {
-        if (error.status === 404) {
+        if (error.response.status === 404) {
           toast.error('Tool does not exist.');
           setCalib(null);
         }
@@ -39,6 +40,10 @@ const ToolDetailsPage = () => {
     };
     getData();
   }, [refresh]);
+
+  useEffect(() => {
+    document.title = 'Tool Details - MEO Tracker';
+  }, []);
 
   // Delete Calibration API Call
   const deleteRecord = async ({ id }) => {
@@ -60,52 +65,50 @@ const ToolDetailsPage = () => {
       ) : (
         <div className='flex flex-col justify-center items-center w-screen'>
           <div className='bg-white border border-solid border-gray-200 rounded-2xl p-4 gap-4 flex flex-col h-fit max-w-xl'>
-            <h1 className='text-center text-2xl font-semibold'>
-              Muszer, meroeszkoz adatai
-            </h1>
+            <h1 className='text-center text-2xl font-semibold'>Tool Details</h1>
             <section className=' bg-slate-100 p-4 rounded-xl'>
               <div className='grid grid-cols-2 gap-2'>
                 <div>
-                  <p className='text-md font-semibold'>Muszer neve:</p>
+                  <p className='text-md font-semibold'>Műszer neve:</p>
                   <p>
                     {toolData.tool_type} {toolData.tool_name}
                   </p>
                 </div>
                 <div>
-                  <p className='text-md font-semibold'>Gyarto:</p>
+                  <p className='text-md font-semibold'>Gyártó:</p>
                   <p>{toolData.tool_brand}</p>
                 </div>
                 <div>
-                  <p className='text-md font-semibold'>Tarolas helye:</p>
+                  <p className='text-md font-semibold'>Tárolás helye:</p>
                   <p>{toolData.tool_location}</p>
                 </div>
 
                 <div>
-                  <p className='text-md font-semibold'>Azonosito:</p>
+                  <p className='text-md font-semibold'>Azonosító:</p>
                   <p>{toolData.tool_id}</p>
                 </div>
                 <div>
-                  <p className='text-md font-semibold'>Gyari szam:</p>
+                  <p className='text-md font-semibold'>Gyári szám:</p>
                   <p>{toolData.tool_serial}</p>
                 </div>
                 <div>
-                  <p className='text-md font-semibold'>Mereshatar:</p>
+                  <p className='text-md font-semibold'>Méréshatár:</p>
                   <p>{toolData.tool_range}</p>
                 </div>
                 <div>
-                  <p className='text-md font-semibold'>Pontossag:</p>
+                  <p className='text-md font-semibold'>Pontosság:</p>
                   <p>{toolData.tool_accuracy}</p>
                 </div>
                 <div>
-                  <p className='text-md font-semibold'>Max eletres:</p>
+                  <p className='text-md font-semibold'>Max eltérés:</p>
                   <p>{toolData.max_deviation}</p>
                 </div>
                 <div>
-                  <p className='text-md font-semibold'>Statusz:</p>
+                  <p className='text-md font-semibold'>Státusz:</p>
                   <p>{toolData.status}</p>
                 </div>
                 <div>
-                  <p className='text-md font-semibold'>Ervenyesseg:</p>
+                  <p className='text-md font-semibold'>Érvényesség:</p>
                   <p>
                     {toolData.valid_until === null
                       ? 'N/A'
@@ -162,6 +165,7 @@ const ToolDetailsPage = () => {
                           <button
                             className='btn btn-outline-error btn-sm'
                             onClick={() => deleteRecord({ id: cal.id })}
+                            disabled={auth?.role === 'viewer' ? true : false}
                           >
                             Delete
                           </button>
@@ -173,20 +177,24 @@ const ToolDetailsPage = () => {
               </div>
             </section>
             <section className='flex flex-row gap-2'>
-              <Link
-                className='btn btn-block btn-primary'
-                to='/tool/modify'
-                state={toolData}
-              >
-                Edit Tool
-              </Link>
-              <Link
-                className='btn btn-block btn-outline-primary'
-                to='/tool/calibrate'
-                state={state}
-              >
-                Calibrate Tool
-              </Link>
+              {auth?.role === 'viewer' || (
+                <>
+                  <Link
+                    className='btn btn-block btn-primary'
+                    to='/tool/modify'
+                    state={toolData}
+                  >
+                    Edit Tool
+                  </Link>
+                  <Link
+                    className='btn btn-block btn-outline-primary'
+                    to='/tool/calibrate'
+                    state={state}
+                  >
+                    Calibrate Tool
+                  </Link>
+                </>
+              )}
               <Link className='btn btn-block btn-outline-primary' to='/'>
                 Back
               </Link>

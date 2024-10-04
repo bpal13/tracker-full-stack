@@ -1,14 +1,17 @@
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from ..utils import get_stats
 from ..db import models
 from .. import schemas
 from ..db.database import get_db
-from ..oauth2 import get_current_user
+from ..oauth2 import get_current_user, CheckRoles
+import logging
 
+
+logger = logging.getLogger("trackerLogger")
 router = APIRouter(
     prefix="/tools",
     tags=["Tools"]
@@ -17,7 +20,7 @@ router = APIRouter(
 
 # Get tool statistics
 @router.get("/stats")
-def get_statistics(db: Session = Depends(get_db)):
+def get_statistics(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     
     tools = db.query(models.Tools).all()
     stats = get_stats(tools)
@@ -27,7 +30,7 @@ def get_statistics(db: Session = Depends(get_db)):
 
 # Return the tools from the database
 @router.get("/", response_model=List[schemas.ToolOut])
-def get_tools(db: Session = Depends(get_db), current_user: int = Depends(get_current_user),
+def get_tools(db: Session = Depends(get_db), current_user = Depends(get_current_user),
               limit: int = 500, search_id: Optional[str] = "", search_name: Optional[str] = "", 
               search_status: Optional[str] = "", search_loc: Optional[str] = "", search_order: Optional[str] = ""):
     
@@ -57,7 +60,7 @@ def get_tools(db: Session = Depends(get_db), current_user: int = Depends(get_cur
 
 # Return a tool
 @router.get("/{id}", response_model=schemas.ToolOut)
-def get_tool(id: int, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+def get_tool(id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     
     # Check if tool exists
     tool = db.query(models.Tools).filter(models.Tools.id == id).first()
@@ -70,29 +73,32 @@ def get_tool(id: int, db: Session = Depends(get_db), current_user: int = Depends
 
 # Add a new tool to the database
 @router.post("/new-tool", response_model=schemas.ToolOut, status_code=status.HTTP_201_CREATED)
-def create_tool(tool: schemas.ToolCreate, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
-    
-    # Check for an existing record
-    check_tool_id = db.query(models.Tools).filter(models.Tools.tool_id == tool.tool_id).first()
-    if check_tool_id:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Tool ID already exist")
-    
-    check_tool_serial = db.query(models.Tools).filter(models.Tools.tool_serial == tool.tool_serial).first()
-    if check_tool_serial:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Tool Serial already exist")
- 
+def create_tool(req:Request, tool: schemas.ToolCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user), authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
+    try:
+        # Check for existing records
+        check_tool_id = db.query(models.Tools).filter(models.Tools.tool_id == tool.tool_id).one_or_none()
+        if check_tool_id:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Tool ID already exist")
+        
+        check_tool_serial = db.query(models.Tools).filter(models.Tools.tool_serial == tool.tool_serial).one_or_none()
+        if check_tool_serial:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Tool Serial already exist")
+        if not check_tool_id and not check_tool_serial:
+            # Add tool to DB
+            new_tool = models.Tools(issued_by = current_user.id, **tool.model_dump())
+            db.add(new_tool)
+            db.commit()
 
-    # Add tool to DB
-    new_tool = models.Tools(issued_by = current_user.id, **tool.model_dump())
-    db.add(new_tool)
-    db.commit()
+            logger.info(f"{req.client.host} - New tool added with Tool ID: {new_tool.tool_id}")
+    except Exception as e:
+        print(e)
 
     return new_tool
 
 
 # Get all the scrapped tools
 @router.get("/scraps", response_model=List[schemas.ToolOut])
-def scraps(db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+def scraps(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
 
     tools = db.query(models.Tools).filter(models.Tools.status == "Selejt").order_by(models.Tools.tool_id.asc()).all()
 
@@ -101,7 +107,7 @@ def scraps(db: Session = Depends(get_db), current_user: int = Depends(get_curren
 
 # Update the tools properties
 @router.put("/update/{id}", response_model=schemas.ToolOut)
-def update_tool(id: int, updated_tool: schemas.ToolUpdate, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+def update_tool(req: Request, id: int, updated_tool: schemas.ToolUpdate, db: Session = Depends(get_db), authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
 
     # Check if tool exist
     query = db.query(models.Tools).filter(models.Tools.id == id)
@@ -114,13 +120,14 @@ def update_tool(id: int, updated_tool: schemas.ToolUpdate, db: Session = Depends
     query.update(updated_tool.model_dump(), synchronize_session=False)
     db.commit()
 
+    logger.info(f"{req.client.host} - Tool update on tool {tool_to_update.tool_id}")
 
     return query.first()
 
 
 # Add a calibration
 @router.post("/calibrate/{id}", response_model=schemas.CalibOut, status_code=status.HTTP_201_CREATED)
-def calibrate_tool(id: int, new_calibration: schemas.CalibCreate, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+def calibrate_tool(req: Request, id: int, new_calibration: schemas.CalibCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user), authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
 
     # Check if tool exists
     tool = db.query(models.Tools).filter(models.Tools.id == id).first()
@@ -158,12 +165,14 @@ def calibrate_tool(id: int, new_calibration: schemas.CalibCreate, db: Session = 
         tool.valid_until = calibration.next_calibration
         db.commit()
 
+    logger.info(f"{req.client.host} - New calibration on tool {tool.tool_id}")
+
     return calibration
 
 
 # Return Calibration details
 @router.get("/calibration/{id}", response_model=schemas.CalibOut)
-def calibration_details(id: int, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+def calibration_details(id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
 
     # Check if calibration exist
     calib = db.query(models.Calibrations).filter(models.Calibrations.parent_id == id).first()
@@ -175,7 +184,7 @@ def calibration_details(id: int, db: Session = Depends(get_db), current_user: in
 
 # Return all calibrations
 @router.get("/calibration/{id}/all", response_model=List[schemas.CalibOut])
-def get_calibrations(id: int, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+def get_calibrations(id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     
     # Check for records
     calibrations = db.query(models.Calibrations).order_by(models.Calibrations.calibration_date.desc()).filter(
@@ -189,8 +198,8 @@ def get_calibrations(id: int, db: Session = Depends(get_db), current_user: int =
 
 # Update a calibration
 @router.put("/calibration/{id}", response_model=schemas.CalibOut)
-def update_calibration(id: int, updated_calib: schemas.CalibCreate, db: Session = Depends(get_db), 
-                       current_user: int = Depends(get_current_user)):
+def update_calibration(req: Request, id: int, updated_calib: schemas.CalibCreate, db: Session = Depends(get_db), 
+                        authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
 
     # Check if calibration exist
     query = db.query(models.Calibrations).filter(models.Calibrations.id == id)
@@ -226,14 +235,14 @@ def update_calibration(id: int, updated_calib: schemas.CalibCreate, db: Session 
         tool.valid_until = calib.next_calibration
         db.commit()
 
-    
+    logger.info(f"{req.client.host} - Calibration updated with id: {calib.id}")    
 
     return query.first()
 
 
 # Delete a calibration
 @router.delete("/calibration/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_calibration(id: int, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+def delete_calibration(req: Request, id: int, db: Session = Depends(get_db), authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
 
     # Check if calibration exist
     calib = db.query(models.Calibrations).filter(models.Calibrations.id == id).first()
@@ -270,6 +279,7 @@ def delete_calibration(id: int, db: Session = Depends(get_db), current_user: int
         tool.valid_until = calib.next_calibration
         db.commit()
 
+    logger.info(f"{req.client.host} - Calibration removed from tool {tool.tool_id}")    
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 

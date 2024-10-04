@@ -1,6 +1,6 @@
 import useCard from '../hooks/useCard';
 import moment from 'moment';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const CardsTable = () => {
   const { cards } = useCard();

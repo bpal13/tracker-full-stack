@@ -1,15 +1,15 @@
 import axios from 'axios';
 
-const url2 = 'https://api.bpal.duckdns.org'
+const url = import.meta.env.VITE_API_URL;
 
 export const apiPublic = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: url,
   timeout: 1000,
   withCredentials: true,
 });
 
 export const apiPrivate = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: url,
   timeout: 1000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,

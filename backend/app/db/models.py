@@ -16,6 +16,7 @@ class Users(Base):
     last_login = Column(TIMESTAMP(timezone=True))
     still_employed = Column(Boolean, server_default="TRUE")
     user_role = Column(Integer, ForeignKey("roles.id"))
+    verified = Column(Boolean, server_default="FALSE")
 
     roles = relationship("Roles")
 
