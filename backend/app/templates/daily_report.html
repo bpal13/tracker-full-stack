@@ -1,0 +1,15 @@
+<html>
+  <body>
+    <p>Sziasztok,</p>
+    <p></p>
+    <p>Új mérőeszközök kerültek be a rendszerbe:</p>
+    <p></p>
+    <ul>
+      {% for tool in body.values() %}
+      <li>{tool}</li>
+      {% endfor %}
+    </ul>
+    <p></p>
+    <p><i>Ez egy automatikus üzenet volt a MEO Trackertől.</i></p>
+  </body>
+</html>

@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES")
     PSW_TOKEN_EXPIRE_MINUTES: int = os.environ.get("PSW_TOKEN_EXPIRE_MINUTES")
 
-    # class Config:
-    #     env_file = ".env"
+    class Config:
+        env_file = ".env"
 
 settings = Settings()

@@ -1,4 +1,5 @@
-FROM node:18-slim as BUILD_IMAGE
+# FROM node:18-slim as BUILD_IMAGE
+FROM node:22-slim as build_image
 
 WORKDIR /app/react-app
 
@@ -16,12 +17,12 @@ RUN npm run build
 
 
 # second stage
-FROM node:18-slim as PRODUCTION_IMAGE
+FROM node:22-slim as prod_image
 
 WORKDIR /app/react-app 
 
 #Copy the build output from BUILD IMAGE to /app/react-app/dist
-COPY --from=BUILD_IMAGE /app/react-app/dist/ /app/react-app/dist/
+COPY --from=build_image /app/react-app/dist/ /app/react-app/dist/
 
 COPY package.json .
 COPY vite.config.js .
@@ -29,7 +30,7 @@ COPY vite.config.js .
 RUN npm install esbuild
 RUN npm install -g vite
 
-EXPOSE 8050
+EXPOSE 5000
 
 CMD ["npm", "run", "preview"]
 

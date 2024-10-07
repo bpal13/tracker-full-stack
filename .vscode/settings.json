@@ -7,5 +7,6 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.singleQuote": true,
   "prettier.semi": true,
-  "prettier.jsxSingleQuote": true
+  "prettier.jsxSingleQuote": true,
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true
 }

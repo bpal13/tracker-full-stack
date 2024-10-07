@@ -12,11 +12,6 @@ logger = logging.getLogger("trackerLogger")
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
-@router.get('/test')
-def test():
-    return {"message": "ok"}
-
-
 @router.get("/weekly")
 def weekly_db_check(bg_task: BackgroundTasks, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
 
@@ -56,7 +51,28 @@ def weekly_db_check(bg_task: BackgroundTasks, db: Session = Depends(get_db), cur
         bg_task.add_task(send_email_message, "Heti Jelentés", [current_user.email], stats, "weekly_report.html")
         logger.info("CALIBRATION CHECK COMPLETE: {}".format(today.strftime("%Y %B %d: %H:%M:%S")))
     except Exception as e:
-        logger.error(e)
+        # print(e)
+        logger.exception(e)
     
+
+    return {"message": "ok"}
+
+
+@router.get('/daily')
+def daily_tool_check(bg_task: BackgroundTasks, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    today = datetime.now()
+    body = {}
+    try:
+        tools = db.query(Tools).all()
+        if tools:
+            for tool in tools:
+                if tool.issue_date == today:
+                    body[tool.id] = f"{tool.tool_id} - {tool.tool_brand} {tool.tool_type} {tool.tool_name}"
+        if len(body) > 0:
+            print(body)
+            # bg_task.add_task(send_email_message, "NAPI JELENTES", [""], body, "daily_report.html")
+        logger.info("DAILY TASK COMPLETE: {}".format(today.strftime("%Y %B %d: %H:%M:%S")))
+    except Exception as e:
+        logger.exception(e)
 
     return {"message": "ok"}

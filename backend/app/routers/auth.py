@@ -26,12 +26,12 @@ def login(response: Response, request: Request,
 
     # Check if user exist
     if not user:
-        # logger.info(f"{request.client.host} - Failed login attempt")
+        logger.info(f"{request.client.host} - Failed login attempt")
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
     
     # Verify password
     if not utils.verify(credentials.password, user.password):
-        # logger.info(f"{request.client.host} - Failed login attempt")
+        logger.info(f"{request.client.host} - Failed login attempt")
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
     
     # Create Access Token
@@ -61,7 +61,7 @@ def change_password(data: schemas.ChangePassword, req: Request, bg_task: Backgro
                     db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     user = db.query(models.Users).filter(models.Users.id == current_user.id).first()
     if not user:
-        # logger.info(f"{req.client.host} - Failed password change attempt")
+        logger.info(f"{req.client.host} - Failed password change attempt")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist.")
     
     if data.password != data.password2:
@@ -97,7 +97,6 @@ def send_password_reset_email(data: schemas.GetEmail, request: Request,
         reset_link = f"http://localhost:{request.client.port}/user/password-reset/{reset_token}"
 
         # Send email in the background
-        # print(reset_link)
         bg_task.add_task(send_email_message, "Password Reset", [user.email], {"url": reset_link}, "password_reset.html")
         logger.info(f"{request.client.host} - Password reset email sent for user: {user.username}")
 

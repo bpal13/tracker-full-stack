@@ -54,7 +54,6 @@ def delete_tool(id: int, db: Session = Depends(get_db), authorize: bool = Depend
 
 
 # Reset a user based on username
-# authorize: bool = Depends(oauth2.CheckRoles(['admin']))
 @router.post('/user-reset')
 def user_reset(data: schemas.UserReset, bg_task: BackgroundTasks, req: Request, db: Session = Depends(get_db), authorize: bool = Depends(oauth2.CheckRoles(['admin']))):
     user = db.query(models.Users).filter(models.Users.username == data.username).first()
@@ -74,6 +73,6 @@ def user_reset(data: schemas.UserReset, bg_task: BackgroundTasks, req: Request, 
 @router.get('/fix')
 async def fix_fields():
 
-    # await test_email()
+    await send_email_message("Test Email", ["pal.bence13@gmail.com"], {"message": "Hello Email."}, "test_mail.html")
 
     return {'message': 'ok'}

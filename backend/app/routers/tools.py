@@ -1,13 +1,13 @@
-from datetime import datetime, timezone
-from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
-from typing import Optional, List
+from ..oauth2 import get_current_user, CheckRoles
+from dateutil.relativedelta import relativedelta
+from datetime import datetime, timezone
 from sqlalchemy.orm import Session
+from typing import Optional, List
+from ..db.database import get_db
 from ..utils import get_stats
 from ..db import models
 from .. import schemas
-from ..db.database import get_db
-from ..oauth2 import get_current_user, CheckRoles
 import logging
 
 
@@ -21,11 +21,14 @@ router = APIRouter(
 # Get tool statistics
 @router.get("/stats")
 def get_statistics(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    try:
+        tools = db.query(models.Tools).all()
+        stats = get_stats(tools)
+        return {"loc_data": stats[0], "status_data": stats[1]}
     
-    tools = db.query(models.Tools).all()
-    stats = get_stats(tools)
-
-    return {"loc_data": stats[0], "status_data": stats[1]}
+    except Exception as ex:
+        logger.exception(ex)
+        raise {"message": "There was an error pocessing your request."}
 
 
 # Return the tools from the database
@@ -35,27 +38,30 @@ def get_tools(db: Session = Depends(get_db), current_user = Depends(get_current_
               search_status: Optional[str] = "", search_loc: Optional[str] = "", search_order: Optional[str] = ""):
     
 
+    try:
+        query = db.query(models.Tools).filter(
+            models.Tools.tool_id.contains(search_id),
+            models.Tools.tool_serial.contains(search_id),
+            models.Tools.tool_name.contains(search_name),
+            models.Tools.status.contains(search_status),
+            models.Tools.tool_location.contains(search_loc))
     
-    query = db.query(models.Tools).filter(
-        models.Tools.tool_id.contains(search_id),
-        models.Tools.tool_serial.contains(search_id),
-        models.Tools.tool_name.contains(search_name),
-        models.Tools.status.contains(search_status),
-        models.Tools.tool_location.contains(search_loc))
+        match search_order:
+            case 'id_asc':
+                tools = query.order_by(models.Tools.tool_id.asc()).limit(limit).all()
+            case 'id_desc':
+                tools = query.order_by(models.Tools.tool_id.desc()).limit(limit).all()
+            case 'newest':
+                tools = query.order_by(models.Tools.issue_date.desc()).limit(limit).all()
+            case 'oldest':
+                tools = query.order_by(models.Tools.issue_date.asc()).limit(limit).all()
+            case _:
+                tools = query.order_by(models.Tools.tool_id.asc()).limit(limit).all()            
+        return tools
     
-    match search_order:
-        case 'id_asc':
-            tools = query.order_by(models.Tools.tool_id.asc()).limit(limit).all()
-        case 'id_desc':
-            tools = query.order_by(models.Tools.tool_id.desc()).limit(limit).all()
-        case 'newest':
-            tools = query.order_by(models.Tools.issue_date.desc()).limit(limit).all()
-        case 'oldest':
-            tools = query.order_by(models.Tools.issue_date.asc()).limit(limit).all()
-        case _:
-            tools = query.order_by(models.Tools.tool_id.asc()).limit(limit).all()
-            
-    return tools
+    except Exception as ex:
+        logger.exception(ex)
+        raise {"message": "There was an error pocessing your request."}
 
 
 # Return a tool
@@ -91,7 +97,8 @@ def create_tool(req:Request, tool: schemas.ToolCreate, db: Session = Depends(get
 
             logger.info(f"{req.client.host} - New tool added with Tool ID: {new_tool.tool_id}")
     except Exception as e:
-        print(e)
+        logger.exception(e)
+        raise {"message": "There was an error pocessing your request."}
 
     return new_tool
 

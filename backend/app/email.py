@@ -3,6 +3,9 @@ from .schemas import UserMail
 from fastapi_mail import FastMail, ConnectionConfig, MessageSchema, MessageType
 from .config import settings
 from typing import List
+import logging
+
+logger = logging.getLogger("trackerLogger")
 
 
 email_config = ConnectionConfig(
@@ -32,7 +35,7 @@ async def send_email_message(subject: str, to: List[str], body: dict | None , te
     try:
         await fm.send_message(message, template_name=template)
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
 
 
 # Registration email
