@@ -59,7 +59,6 @@ const ToolDetailsPage = () => {
 
   return (
     <Layout>
-      {state?.notif && toast.success(state.notif, { id: state.toastId })}
       {toolData === null ? (
         <Spinner />
       ) : (

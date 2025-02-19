@@ -34,7 +34,7 @@ const AddUserPage = () => {
     e.preventDefault();
     // clear form error
     setFormError();
-    console.log(formData);
+    //console.log(formData);
     if (formData.user_role === 0 || formData.user_role === '0') {
       setFormError('Choose a user role.');
     } else {

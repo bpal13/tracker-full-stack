@@ -48,10 +48,10 @@ def weekly_db_check(bg_task: BackgroundTasks, db: Session = Depends(get_db), cur
                     tool.valid_until = calib.next_calibration
                     db.commit()
                     stats["tools_calibrated"] += 1
-        bg_task.add_task(send_email_message, "Heti Jelentés", [current_user.email], stats, "weekly_report.html")
+        #bg_task.add_task(send_email_message, "Heti Jelentés", [current_user.email], stats, "weekly_report.html")
         logger.info("CALIBRATION CHECK COMPLETE: {}".format(today.strftime("%Y %B %d: %H:%M:%S")))
     except Exception as e:
-        # print(e)
+        #print(e)
         logger.exception(e)
     
 
@@ -73,6 +73,7 @@ def daily_tool_check(bg_task: BackgroundTasks, db: Session = Depends(get_db), cu
             # bg_task.add_task(send_email_message, "NAPI JELENTES", [""], body, "daily_report.html")
         logger.info("DAILY TASK COMPLETE: {}".format(today.strftime("%Y %B %d: %H:%M:%S")))
     except Exception as e:
+        #print(e)
         logger.exception(e)
 
     return {"message": "ok"}

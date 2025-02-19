@@ -79,7 +79,7 @@ def get_tool(id: int, db: Session = Depends(get_db), current_user = Depends(get_
 
 # Add a new tool to the database
 @router.post("/new-tool", response_model=schemas.ToolOut, status_code=status.HTTP_201_CREATED)
-def create_tool(req:Request, tool: schemas.ToolCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user), authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
+def create_tool(req:Request, tool: schemas.ToolCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     try:
         # Check for existing records
         check_tool_id = db.query(models.Tools).filter(models.Tools.tool_id == tool.tool_id).one_or_none()
@@ -114,7 +114,7 @@ def scraps(db: Session = Depends(get_db), current_user = Depends(get_current_use
 
 # Update the tools properties
 @router.put("/update/{id}", response_model=schemas.ToolOut)
-def update_tool(req: Request, id: int, updated_tool: schemas.ToolUpdate, db: Session = Depends(get_db), authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
+def update_tool(req: Request, id: int, updated_tool: schemas.ToolUpdate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
 
     # Check if tool exist
     query = db.query(models.Tools).filter(models.Tools.id == id)
@@ -134,7 +134,7 @@ def update_tool(req: Request, id: int, updated_tool: schemas.ToolUpdate, db: Ses
 
 # Add a calibration
 @router.post("/calibrate/{id}", response_model=schemas.CalibOut, status_code=status.HTTP_201_CREATED)
-def calibrate_tool(req: Request, id: int, new_calibration: schemas.CalibCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user), authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
+def calibrate_tool(req: Request, id: int, new_calibration: schemas.CalibCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
 
     # Check if tool exists
     tool = db.query(models.Tools).filter(models.Tools.id == id).first()
@@ -205,8 +205,7 @@ def get_calibrations(id: int, db: Session = Depends(get_db), current_user = Depe
 
 # Update a calibration
 @router.put("/calibration/{id}", response_model=schemas.CalibOut)
-def update_calibration(req: Request, id: int, updated_calib: schemas.CalibCreate, db: Session = Depends(get_db), 
-                        authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
+def update_calibration(req: Request, id: int, updated_calib: schemas.CalibCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
 
     # Check if calibration exist
     query = db.query(models.Calibrations).filter(models.Calibrations.id == id)
@@ -249,7 +248,7 @@ def update_calibration(req: Request, id: int, updated_calib: schemas.CalibCreate
 
 # Delete a calibration
 @router.delete("/calibration/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_calibration(req: Request, id: int, db: Session = Depends(get_db), authorize: bool = Depends(CheckRoles(['admin', 'operator']))):
+def delete_calibration(req: Request, id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
 
     # Check if calibration exist
     calib = db.query(models.Calibrations).filter(models.Calibrations.id == id).first()

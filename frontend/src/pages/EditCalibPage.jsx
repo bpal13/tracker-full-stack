@@ -27,7 +27,9 @@ const EditCalibPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.put(`/tools/calibration/${state.id}`);
+      const response = await api.put(`/tools/calibration/${state.id}`, {
+        ...formData,
+      });
       navigate('/tool/details', {
         state: {
           id: state.parent_id,
@@ -36,6 +38,7 @@ const EditCalibPage = () => {
         },
       });
     } catch (error) {
+      console.log(error.response);
       if (!error?.response) {
         toast.error('No response from the server.');
       }
@@ -71,6 +74,7 @@ const EditCalibPage = () => {
             <InputGroup
               label='Mért eltérés:'
               name='form-deviation'
+              type='text'
               value={formData.actual_deviation}
               onChange={(e) =>
                 editFormData({ actual_deviation: e.target.value })

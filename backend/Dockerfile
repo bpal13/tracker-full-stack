@@ -1,5 +1,5 @@
-# FROM python:3.10.11-slim
-FROM python:alpine
+FROM python:3.10.11-slim
+#FROM python:alpine
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt

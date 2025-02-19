@@ -62,9 +62,11 @@ const AddCalibPage = () => {
         ...formData,
       });
       navigate('/tool/details', {
-        state: { id: state.id, notif: 'Tool Calibrated.', toastId: 'calib' },
+        state: { id: state.id },
+        //state: { id: state.id, notif: 'Tool Calibrated.', toastId: 'calib' },
       });
     } catch (error) {
+      console.log(error);
       if (!error?.response) {
         toast.error('Server is not responding.');
       }
@@ -106,6 +108,7 @@ const AddCalibPage = () => {
             <InputGroup
               label='Mért eltérés:'
               name='form-deviation'
+              type='text'
               value={formData.actual_deviation}
               onChange={(e) =>
                 editFormData({ actual_deviation: e.target.value })
