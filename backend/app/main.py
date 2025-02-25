@@ -7,9 +7,9 @@ from .db import models
 import logging
 
 # Logger
-logger_setup()
-logger = logging.getLogger("trackerLogger")
-logger.info("Logger setup complete.")
+# logger_setup()
+# logger = logging.getLogger("trackerLogger")
+# logger.info("Logger setup complete.")
 
 # create tables on startup
 models.Base.metadata.create_all(bind=engine)

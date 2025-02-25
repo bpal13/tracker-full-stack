@@ -12,7 +12,7 @@ from ..db import models
 import logging
 
 
-logger = logging.getLogger("trackerLogger")
+# logger = logging.getLogger("trackerLogger")
 router = APIRouter(
     tags=['Authentication'],
 )
@@ -26,12 +26,12 @@ def login(response: Response, request: Request,
 
     # Check if user exist
     if not user:
-        logger.info(f"{request.client.host} - Failed login attempt")
+        # logger.info(f"{request.client.host} - Failed login attempt")
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
     
     # Verify password
     if not utils.verify(credentials.password, user.password):
-        logger.info(f"{request.client.host} - Failed login attempt")
+        # logger.info(f"{request.client.host} - Failed login attempt")
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
     
     # Create Access Token
@@ -51,7 +51,7 @@ def login(response: Response, request: Request,
                                        role=user.roles.name, access_token=access_token, verified=user.verified)
 
     # Return JWT Token
-    logger.info(f"{request.client.host} - Successful login: {user.username}")
+    # logger.info(f"{request.client.host} - Successful login: {user.username}")
     return login_response
     
 
@@ -61,7 +61,7 @@ def change_password(data: schemas.ChangePassword, req: Request, bg_task: Backgro
                     db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     user = db.query(models.Users).filter(models.Users.id == current_user.id).first()
     if not user:
-        logger.info(f"{req.client.host} - Failed password change attempt")
+        # logger.info(f"{req.client.host} - Failed password change attempt")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist.")
     
     if data.password != data.password2:
@@ -76,7 +76,7 @@ def change_password(data: schemas.ChangePassword, req: Request, bg_task: Backgro
         # Store the new password in DB and sent a notification
         user.password = new_password
         db.commit()
-        logger.info(f"{req.client.host} - Password changed for for user: {user.username}")
+        # logger.info(f"{req.client.host} - Password changed for for user: {user.username}")
         bg_task.add_task(send_email_message, "Password Change", [user.email], {"username": user.username}, "password_reset_notif.html")
 
         return user
@@ -152,6 +152,6 @@ def logout(response: Response, req: Request, db: Session = Depends(get_db), curr
     user = db.query(models.Users).filter(models.Users.id == current_user.id).first()
 
     response.delete_cookie(key="refresh_token")
-    logger.info(f"{req.client.host} - logged out from user: {user.username}")
+    # logger.info(f"{req.client.host} - logged out from user: {user.username}")
 
     return {"message": "You are now logged out."}

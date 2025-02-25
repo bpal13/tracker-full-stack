@@ -41,7 +41,7 @@ const StatsPage = () => {
                   type: 'bar',
                 },
               ]}
-              layout={{ title: 'Tools by Location' }}
+              layout={{ title: 'Tools by Status' }}
             />
           </div>
           <div className='p-4 rounded-xl border border-solid h-fit w-fit bg-white'>
@@ -53,7 +53,7 @@ const StatsPage = () => {
                   type: 'bar',
                 },
               ]}
-              layout={{ title: 'Tools by Status' }}
+              layout={{ title: 'Tools by Location' }}
             />
           </div>
         </div>

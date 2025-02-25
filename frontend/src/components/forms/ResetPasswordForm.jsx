@@ -75,7 +75,7 @@ const ResetPasswordRequest = () => {
           <b>Password requirements:</b>
         </p>
         <ul>
-          <li>Min. 6 characters long</li>
+          <li>Min. 8 characters long</li>
           <li>1 uppercase letter</li>
           <li>1 special character</li>
         </ul>

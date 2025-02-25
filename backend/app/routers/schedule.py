@@ -8,12 +8,12 @@ from .. import oauth2
 from datetime import datetime
 
 
-logger = logging.getLogger("trackerLogger")
+# logger = logging.getLogger("trackerLogger")
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
 @router.get("/weekly")
-def weekly_db_check(bg_task: BackgroundTasks, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+def weekly_db_check(bg_task: BackgroundTasks, db: Session = Depends(get_db)):
 
     today = datetime.now()
     stats = {"tools_calibrated": 0,
@@ -49,10 +49,10 @@ def weekly_db_check(bg_task: BackgroundTasks, db: Session = Depends(get_db), cur
                     db.commit()
                     stats["tools_calibrated"] += 1
         #bg_task.add_task(send_email_message, "Heti Jelentés", [current_user.email], stats, "weekly_report.html")
-        logger.info("CALIBRATION CHECK COMPLETE: {}".format(today.strftime("%Y %B %d: %H:%M:%S")))
+        # logger.info("CALIBRATION CHECK COMPLETE: {}".format(today.strftime("%Y %B %d: %H:%M:%S")))
     except Exception as e:
-        #print(e)
-        logger.exception(e)
+        print(e)
+        # logger.exception(e)
     
 
     return {"message": "ok"}
@@ -71,9 +71,9 @@ def daily_tool_check(bg_task: BackgroundTasks, db: Session = Depends(get_db), cu
         if len(body) > 0:
             print(body)
             # bg_task.add_task(send_email_message, "NAPI JELENTES", [""], body, "daily_report.html")
-        logger.info("DAILY TASK COMPLETE: {}".format(today.strftime("%Y %B %d: %H:%M:%S")))
+        # logger.info("DAILY TASK COMPLETE: {}".format(today.strftime("%Y %B %d: %H:%M:%S")))
     except Exception as e:
-        #print(e)
-        logger.exception(e)
+        print(e)
+        # logger.exception(e)
 
     return {"message": "ok"}

@@ -7,7 +7,7 @@ from ..db.database import get_db
 from ..email import send_email_message
 
 
-logger = logging.getLogger("trackerLogger") 
+# logger = logging.getLogger("trackerLogger") 
 router = APIRouter(
     prefix="/admin",
     tags=["Administrator"]
@@ -41,7 +41,7 @@ def register(user: schemas.UserCreate, bg_tasks: BackgroundTasks, db: Session = 
 
     #Send email in the background
     bg_tasks.add_task(send_email_message, "Registration", [to_email.email], to_email.model_dump(), "registration.html")
-    logger.info(f"New User: {new_user.username}, role: {new_user.user_role}")
+    # logger.info(f"New User: {new_user.username}, role: {new_user.user_role}")
 
     return new_user
 

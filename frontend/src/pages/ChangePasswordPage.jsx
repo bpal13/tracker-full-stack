@@ -76,7 +76,7 @@ const ChangePasswordPage = () => {
               <b>Követelmények:</b>
             </p>
             <ul>
-              <li>Min. 6 karakter hosszú</li>
+              <li>Min. 8 karakter hosszú</li>
               <li>1 nagybetű</li>
               <li>1 speciális karakter</li>
             </ul>

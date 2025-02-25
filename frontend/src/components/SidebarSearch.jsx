@@ -11,7 +11,7 @@ const SidebarSearch = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const resp = await api.get(`/tools/?search_id=${searchTag}`);
+      const resp = await api.get(`/tools/search?search_keyword=${searchTag}`);
       setCards(resp.data);
     } catch (error) {
       if (!error?.response) {
@@ -27,7 +27,7 @@ const SidebarSearch = () => {
         onSubmit={handleSubmit}
       >
         <input
-          placeholder='Search Tool ID or Serial'
+          placeholder='Search by Tool ID'
           type='search'
           id='search_bar'
           className='input input-sm border-none'

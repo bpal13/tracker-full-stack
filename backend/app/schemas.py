@@ -135,7 +135,7 @@ class ToolUpdate(BaseModel):
 class CalibCreate(BaseModel):
     rating: str
     temperature: int
-    actual_deviation: str
+    actual_deviation: float = Field(default=0)
     etalon: Optional[str] = None
     KULSO_I_A: float = Field(default=0)
     KULSO_II_A: float = Field(default=0)

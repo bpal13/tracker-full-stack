@@ -11,7 +11,7 @@ from .. import schemas
 import logging
 
 
-logger = logging.getLogger("trackerLogger")
+# logger = logging.getLogger("trackerLogger")
 router = APIRouter(
     prefix="/tools",
     tags=["Tools"]
@@ -27,7 +27,7 @@ def get_statistics(db: Session = Depends(get_db), current_user = Depends(get_cur
         return {"loc_data": stats[0], "status_data": stats[1]}
     
     except Exception as ex:
-        logger.exception(ex)
+        # logger.exception(ex)
         raise {"message": "There was an error pocessing your request."}
 
 
@@ -60,9 +60,16 @@ def get_tools(db: Session = Depends(get_db), current_user = Depends(get_current_
         return tools
     
     except Exception as ex:
-        logger.exception(ex)
+        # logger.exception(ex)
         raise {"message": "There was an error pocessing your request."}
 
+
+@router.get("/search", response_model=List[schemas.ToolOut])
+def search_tools(db: Session = Depends(get_db), current_user = Depends(get_current_user), search_keyword: Optional[str] = ""):
+
+    tools = db.query(models.Tools).filter(models.Tools.tool_id.contains(search_keyword)).all()
+
+    return tools
 
 # Return a tool
 @router.get("/{id}", response_model=schemas.ToolOut)
@@ -95,9 +102,9 @@ def create_tool(req:Request, tool: schemas.ToolCreate, db: Session = Depends(get
             db.add(new_tool)
             db.commit()
 
-            logger.info(f"{req.client.host} - New tool added with Tool ID: {new_tool.tool_id}")
+            # logger.info(f"{req.client.host} - New tool added with Tool ID: {new_tool.tool_id}")
     except Exception as e:
-        logger.exception(e)
+        # logger.exception(e)
         raise {"message": "There was an error pocessing your request."}
 
     return new_tool
@@ -127,7 +134,7 @@ def update_tool(req: Request, id: int, updated_tool: schemas.ToolUpdate, db: Ses
     query.update(updated_tool.model_dump(), synchronize_session=False)
     db.commit()
 
-    logger.info(f"{req.client.host} - Tool update on tool {tool_to_update.tool_id}")
+    # logger.info(f"{req.client.host} - Tool update on tool {tool_to_update.tool_id}")
 
     return query.first()
 
@@ -172,7 +179,7 @@ def calibrate_tool(req: Request, id: int, new_calibration: schemas.CalibCreate, 
         tool.valid_until = calibration.next_calibration
         db.commit()
 
-    logger.info(f"{req.client.host} - New calibration on tool {tool.tool_id}")
+    # logger.info(f"{req.client.host} - New calibration on tool {tool.tool_id}")
 
     return calibration
 
@@ -241,7 +248,7 @@ def update_calibration(req: Request, id: int, updated_calib: schemas.CalibCreate
         tool.valid_until = calib.next_calibration
         db.commit()
 
-    logger.info(f"{req.client.host} - Calibration updated with id: {calib.id}")    
+    # logger.info(f"{req.client.host} - Calibration updated with id: {calib.id}")    
 
     return query.first()
 
@@ -285,7 +292,7 @@ def delete_calibration(req: Request, id: int, db: Session = Depends(get_db), cur
         tool.valid_until = calib.next_calibration
         db.commit()
 
-    logger.info(f"{req.client.host} - Calibration removed from tool {tool.tool_id}")    
+    # logger.info(f"{req.client.host} - Calibration removed from tool {tool.tool_id}")    
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 

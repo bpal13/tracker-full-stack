@@ -153,6 +153,10 @@ export const tool_names = [
     id: 34,
     value: 'Menetidomszer',
   },
+  {
+    id: 35,
+    value: 'Mérőhasáb szett',
+  },
 ];
 
 export const tool_status = [
