@@ -130,6 +130,46 @@ class ToolUpdate(BaseModel):
         from_attributes = True
 
 
+# Dugos idomszer, Menetidomszer
+class GaugeCreate(BaseModel):
+    status:  str
+    tool_id: str
+    tool_brand: str
+    tool_type: str
+    tool_serial: str
+    tool_name: str
+    tool_location: str
+    notes: Optional[str] = None
+
+
+class GaugeOut(GaugeCreate):
+    issue_date: datetime
+    id: int
+    owner: UserToolOut
+
+    class Config:
+        from_attributes = True
+
+
+# Egyeb eszkozok
+class MiscCreate(BaseModel):
+    status: str
+    tool_id: str
+    tool_name: str
+    tool_location: str
+    tool_brand: str
+    tool_serial: str
+    notes: Optional[str] = None
+
+
+class MiscOut(MiscCreate):
+    issue_date: datetime
+    id: int
+    owner: UserToolOut
+
+    class Config:
+        from_attributes = True
+
 
 # Calibration Schemas
 class CalibCreate(BaseModel):
