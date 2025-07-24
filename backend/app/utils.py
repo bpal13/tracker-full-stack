@@ -68,3 +68,8 @@ def get_stats(tools):
             loc_data[row.tool_location] += 1
 
     return status_data, loc_data
+
+
+# Auto-calibration for new items
+def auto_calibration():
+    pass

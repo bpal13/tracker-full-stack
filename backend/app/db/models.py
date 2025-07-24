@@ -103,3 +103,21 @@ class Roles(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, unique=True, nullable=False)
+
+
+class MiscItems(Base):
+    __tablename__ == "misc_items"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    status = Column(String(20))
+    tool_id = Column(String(10), unique=True, nullable=False)
+    tool_brand = Column(String(50), nullable=False)
+    tool_type = Column(String(50), nullable=False)
+    tool_serial = Column(String(50), nullable=False)
+    tool_name = Column(String(50), nullable=False)
+    tool_location = Column(String(50), nullable=False)
+    notes = Column(String(255))
+
+    issue_date = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    issued_by = Column(Integer, ForeignKey("users.id"), nullable=False)
+    owner = relationship("Users")
