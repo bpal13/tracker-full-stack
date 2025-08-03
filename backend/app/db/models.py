@@ -20,20 +20,6 @@ class Users(Base):
 
     roles = relationship("Roles")
 
-    def validate_employee_id(self, employee_id: int):
-        pass
-
-    def validate_username(self, username: str):
-        pass
-
-    def generate_password(self, password):
-        pass
-
-    
-    def check_password(self, password):
-        pass
-
-
 
 class Tools(Base):
     __tablename__ = "tools"
@@ -49,16 +35,14 @@ class Tools(Base):
     tool_accuracy = Column(String(50), nullable=False)
     tool_range = Column(String(50), nullable=False)
     max_deviation = Column(String(50), nullable=False)
-    visibility = Column(Boolean, server_default="TRUE") # DELETE LATER
     valid_until = Column(DateTime)
     notes = Column(String(255))
 
     issue_date = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     issued_by = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("Users")
-
-    def validate_tool_id(self, tool_id):
-        pass
+    last_modified = Column(DateTime)
+    modified_by = Column(String(100))
 
 
 class Calibrations(Base):
@@ -66,8 +50,9 @@ class Calibrations(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
 
-    parent_id = Column(Integer, ForeignKey("tools.id", ondelete="CASCADE"), nullable=False)
+    parent_id = Column(Integer, ForeignKey("tools.id"), nullable=False)
 
+    calibration_id = Column(String(15), nullable=False, unique=True)
     calibration_by = Column(String(100), nullable=False)
     calibration_date = Column(DateTime, nullable=False)
     next_calibration = Column(DateTime, nullable=False)
@@ -96,6 +81,8 @@ class Calibrations(Base):
     hasab = Column(String(100))
     ring = Column(String(100))
     calib_notes = Column(String(255))
+    last_modified = Column(DateTime)
+    modified_by = Column(String(100))
 
 
 class Roles(Base):
@@ -103,10 +90,11 @@ class Roles(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, unique=True, nullable=False)
+    role = Column(Integer, unique=True, nullable=False)
 
 
 class MiscItems(Base):
-    __tablename__ == "misc_items"
+    __tablename__ = "misc_items"
 
     id = Column(Integer, primary_key=True, nullable=False)
     status = Column(String(20))
@@ -121,3 +109,5 @@ class MiscItems(Base):
     issue_date = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     issued_by = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("Users")
+    last_modified = Column(DateTime)
+    modified_by = Column(String(100))

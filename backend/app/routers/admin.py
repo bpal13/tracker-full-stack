@@ -1,6 +1,6 @@
 import logging
-from fastapi import APIRouter, status, HTTPException, Depends, BackgroundTasks, Request, Response
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, status, HTTPException, Depends, BackgroundTasks, Request, Response # type: ignore
+from sqlalchemy.orm import Session # type: ignore
 from ..db import models
 from .. import schemas, utils, oauth2
 from ..db.database import get_db
@@ -76,3 +76,9 @@ async def fix_fields():
     await send_email_message("Test Email", ["pal.bence13@gmail.com"], {"message": "Hello Email."}, "test_mail.html")
 
     return {'message': 'ok'}
+
+
+@router.get('/cid')
+def fix_cal_id(db: Session = Depends(get_db)):
+    
+    return {"message": "ok"}

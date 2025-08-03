@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field # type: ignore
 from decimal import Decimal
 from typing import Optional, List
 from datetime import datetime
@@ -59,7 +59,6 @@ class UserLogin(BaseModel):
 
 
 class UserToolOut(BaseModel):
-    id: int
     fullname: str
 
     class Config:
@@ -105,9 +104,10 @@ class ToolCreate(BaseModel):
 
 class ToolOut(ToolCreate):
     issue_date: datetime
-    id: int
     owner: UserToolOut
     valid_until: Optional[datetime]
+    last_modified: Optional[datetime]
+    modified_by: Optional[str]  
 
     class Config:
         from_attributes = True
@@ -124,18 +124,19 @@ class ToolUpdate(BaseModel):
     tool_range: str
     max_deviation: str
     notes: Optional[str] = None
-
+    last_modified: datetime = datetime.now()
+    modified_by: str 
 
     class Config:
         from_attributes = True
 
 
-# Dugos idomszer, Menetidomszer
+# Dugos idomszer, Menetidomszer, Egyeb eszkoz
 class GaugeCreate(BaseModel):
-    status:  str
+    status:  str = "Nem Kalibráljuk"
     tool_id: str
     tool_brand: str
-    tool_type: str
+    #tool_type: str # TODO REMOVE LINE
     tool_serial: str
     tool_name: str
     tool_location: str
@@ -144,35 +145,30 @@ class GaugeCreate(BaseModel):
 
 class GaugeOut(GaugeCreate):
     issue_date: datetime
-    id: int
     owner: UserToolOut
+    last_modified: Optional[datetime]
+    modified_by: Optional[str] 
 
     class Config:
         from_attributes = True
 
 
-# Egyeb eszkozok
-class MiscCreate(BaseModel):
-    status: str
+class GaugeUpdate(BaseModel):
+    status:  str = "Nem Kalibráljuk"
     tool_id: str
+    tool_brand: str
+    #tool_type: str # TODO REMOVE LINE
+    tool_serial: str
     tool_name: str
     tool_location: str
-    tool_brand: str
-    tool_serial: str
     notes: Optional[str] = None
-
-
-class MiscOut(MiscCreate):
-    issue_date: datetime
-    id: int
-    owner: UserToolOut
-
-    class Config:
-        from_attributes = True
+    last_modified: datetime = datetime.now()
+    modified_by: str 
 
 
 # Calibration Schemas
 class CalibCreate(BaseModel):
+    calibration_id: str
     rating: str
     temperature: int
     actual_deviation: float = Field(default=0)
@@ -201,14 +197,45 @@ class CalibCreate(BaseModel):
 
 
 class CalibOut(CalibCreate):
-    id: int
     parent_id: int
     calibration_date: datetime
     next_calibration: datetime
     calibration_by: str
+    last_modified: Optional[datetime]
+    modified_by: Optional[str]
 
     class Config:
         from_attributes = True
+
+
+class CalibUpdate(BaseModel):
+    rating: str
+    temperature: int
+    actual_deviation: float = Field(default=0)
+    etalon: Optional[str] = None
+    KULSO_I_A: float = Field(default=0)
+    KULSO_II_A: float = Field(default=0)
+    KULSO_III_A: float = Field(default=0)
+    KULSO_I_B: float = Field(default=0)
+    KULSO_II_B: float = Field(default=0)
+    KULSO_III_B: float = Field(default=0)
+    KULSO_I_C: float = Field(default=0)
+    KULSO_II_C: float = Field(default=0)
+    KULSO_III_C: float = Field(default=0)
+    BELSO_I_A: float = Field(default=0)
+    BELSO_II_A: float = Field(default=0)
+    BELSO_III_A: float = Field(default=0)
+    BELSO_I_B: float = Field(default=0)
+    BELSO_II_B: float = Field(default=0)
+    BELSO_III_B: float = Field(default=0)
+    BELSO_I_C: float = Field(default=0)
+    BELSO_II_C: float = Field(default=0)
+    BELSO_III_C: float = Field(default=0) 
+    hasab: Optional[str] = None
+    ring: Optional[str] = None
+    calib_notes: Optional[str] = None
+    last_modified:datetime =  datetime.now()
+    modified_by: str 
 
 
 # Admin page schemas

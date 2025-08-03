@@ -1,5 +1,5 @@
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import admin, auth, tools, schedule
+from .routers import admin, auth, tools, schedule, gauges
 from .logger.logger_setup import logger_setup
 from .db.database import engine
 from fastapi import FastAPI
@@ -16,6 +16,7 @@ models.Base.metadata.create_all(bind=engine)
 
 origins = [
     "http://localhost:5173",
+    "http://localhost:5000",
     "http://172.16.0.229:5000"]
 
 
@@ -31,7 +32,7 @@ app = FastAPI(
         """,
     summary="MEO Tool Tracker API",
     version="0.6",
-    debug=False,
+    debug=True,
     docs_url="/docs",
 )
 
@@ -40,6 +41,7 @@ app.include_router(admin.router)
 app.include_router(auth.router)
 app.include_router(tools.router)
 app.include_router(schedule.router)
+app.include_router(gauges.router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -51,6 +53,6 @@ app.add_middleware(
 
 @app.get('/')
 def root():
-    return {'message': 'tool tracker API'}
+    return {'message': 'tool tracker API 1.0'}
 
 

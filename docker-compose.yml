@@ -8,6 +8,11 @@ services:
     env_file:
       - .env
 
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+
   frontend:
     build: ./frontend/
     container_name: tracker_frontend

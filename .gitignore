@@ -1,4 +1,6 @@
 .env
 db-backups/
+backend/app/routers/old_routers/
+backend/app/docker_compose.yml
 notes.txt
 notes.md
